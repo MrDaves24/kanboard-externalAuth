@@ -3,7 +3,50 @@
 </div>
 
 <!-- TODO : Traduire tous les t() -->
-<!-- TODO : Lister les champs, leur utilité et si required ou non -->
+<!-- TODO : Permettre d'enregistrer field par field ! Ou tous les fields d'un coup ?? -->
+<!-- TODO : Selon type DB sélectionné, afficher ou cacher les champs nécessaires :) -->
+<!-- TODO : Ajouter support sqlite et mssql -->
+<!-- TODO : Ajouter support mysql cert (ou pas lol) -->
+
+<!-- Champs :
+Global :
+  *ExternalDbAuth_type : mysql/postgres TODO : Possible de supporter sqlite et mssql, mais oskour
+  *ExternalDbAuth_host : string
+  *ExternalDbAuth_db : string
+  ExternalDbAuth_prefix("") string : Préfixe à appliquer à toutes les tables
+  *ExternalDbAuth_user string
+  *ExternalDbAuth_pwd string
+  ExternalDbAuth_port(3306) int
+
+User :
+  *ExternalDbAuth_user_table string
+  *ExternalDbAuth_user_id string
+  *ExternalDbAuth_user_username string
+  *ExternalDbAuth_user_pwd string
+  *ExternalDbAuth_user_pwd_encryption : none/PHP
+  ExternalDbAuth_user_nickname(same as ExternalDbAuth_user_username) string
+  ExternalDbAuth_user_email("") string
+  ExternalDbAuth_user_active(all enabled) string
+  ExternalDbAuth_user_active_logic(active => 1 enabled) block/active
+
+Groups :
+  *ExternalDbAuth_group_table string
+  *ExternalDbAuth_group_id string
+  *ExternalDbAuth_group_name string
+
+Mappping :
+  *ExternalDbAuth_mapping_table string
+  *ExternalDbAuth_mapping_user string
+  ExternalDbAuth_mapping_user_type (id) : id/name
+  *ExternalDbAuth_mapping_group string
+  ExternalDbAuth_mapping_group_type (id) : id/name
+-->
+
+<?= $this->asset->js('plugins/ExternalDbAuth/assets/js/config.js') ?>
+
+<input type="hidden" value="<?= $this->url->base().'plugins/ExternalDbAuth/assets/php/check_connection.php' ?>" id="URL_test_connection" />
+<span style="display:none;" id="msg-connection-success"><?= t('Successfully connected to the external DB !') ?></span>
+<span style="display:none;" id="msg-connection-fail"><?= t('An error happend while trying to connect to the external DB, please see JS console for more details.') ?></span>
 
 <form method="post" action="<?= $this->url->href('ConfigController', 'save', array('plugin' => 'ExternalDbAuth')) ?>" autocomplete="off">
 
@@ -15,8 +58,10 @@
       <!-- DB Type -->
       <?= $this->form->label(t('DB Type'), "ExternalDbAuth_type") ?>
       <?= $this->form->select("ExternalDbAuth_type",
-        ["PDO" => "PDO",
-        "mysqli" => "mysqli",],
+        [
+          "mysql" => "mysql",
+          "postgres" => "postgres",
+        ],
         $values
       ) ?>
 
@@ -42,11 +87,13 @@
 
       <!-- port -->
       <?= $this->form->label(t('Port'), "ExternalDbAuth_port") ?>
-      <?= $this->form->number("ExternalDbAuth_port", $values, array()) ?>
+      <?php if(!isset($values["ExternalDbAuth_port"])) $values["ExternalDbAuth_port"] = 3306; ?>
+      <?= $this->form->number("ExternalDbAuth_port", $values, array(), ["required"]) ?>
 
       <!-- Test connection -->
       <?= $this->form->label(t('Test connection'), "") ?>
-      <button type="button"><?= t('Test connection') ?></button>
+      <button id="b-test_connection" type="button"><?= t('Test connection') ?></button>
+      <div id="connection_result"></div>
     </fieldset>
 
     <fieldset>
@@ -73,6 +120,7 @@
         "ExternalDbAuth_user_pwd_encryption",
         [
           "none" => t('No encryption (plain)'),
+          "PHP" => t("PHP password_verify"),
           // TODO : Remplir d'autres méthodes... #help
         ],
         $values
@@ -156,6 +204,6 @@
     </fieldset>
 
     <div class="form-actions">
-        <button type="submit" onclick="test_connection();" class="btn btn-blue"><?= t('Save') ?></button>
+        <button type="submit" class="btn btn-blue"><?= t('Save') ?></button>
     </div>
 </form>
