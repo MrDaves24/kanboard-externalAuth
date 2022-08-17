@@ -19,6 +19,7 @@
 
   // nop("Debugging POST values", ["type" => $type,"host" => $host,"db" => $db,"prefix" => $prefix,"user" => $user,"pwd" => $pwd,"port" => $port,]);
 
+  // Opening connection to DB
   try {
     switch($type) {
       case "mysql": {
@@ -49,6 +50,7 @@
     nop("Can't open connection !", $e);
   }
 
+  // Execute basic request to test connection
   try {
     $db->execute("SELECT TRUE;");
   } catch (\Exception $e) {

@@ -1,16 +1,10 @@
-/*
-*ExternalDbAuth_type : PDO/mysqli
-*ExternalDbAuth_host : string
-*ExternalDbAuth_db : string
-ExternalDbAuth_prefix("") string : Préfixe à appliquer à toutes les tables
-*ExternalDbAuth_user string
-*ExternalDbAuth_pwd string
-ExternalDbAuth_port(3306) int
-*/
+"use strict";
 
 let to;
+let reqs;
 
 window.addEventListener('load', (event) => {
+  // Connection tester
   document.getElementById("b-test_connection").addEventListener("click", () => {
     const url = document.getElementById("URL_test_connection").value;
 
@@ -60,10 +54,18 @@ window.addEventListener('load', (event) => {
         to = setTimeout(() => {
           r.className = "";
           r.innerHTML = "";
-        }, 3000);
+        }, 5000);
       });
     } else {
       alert("jQuery isn't loaded...");
     }
   });
+
+  // TODO : If disabled, save n remove required ?
+  for (let id of ["ExternalDbAuth_user_enabled", "ExternalDbAuth_group_enabled", "ExternalDbAuth_session_enabled"]) {
+    const cb = document.getElementsByName(id)[0];
+    cb.addEventListener("change", () => {
+      cb.parentElement.parentElement.getElementsByClassName("form-children")[0].style.display = (cb.checked ? '' : 'none');
+    });
+  }
 });
