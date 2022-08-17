@@ -5,6 +5,9 @@ Based on the fact that most web-services (Joomla, Wordpress, Nextcloud, ...) bas
 
 Everything is configurable easily through the admin panel and is fully flexible (I hope so).
 
+I will use as much as possible the libs packaged in Kanboard to have close to no requirments.
+I try to stick to the original Kanboard way to manage assets, files and how to write the code.
+
 # Features
 ## External DB
 Easy connection to an external DB through basic informations (host, user, pwd, port, ...).
